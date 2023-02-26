@@ -1,0 +1,51 @@
+{
+  "options": {
+    "Sources": {
+      "Input folders": [
+        "/home/lcv/bin/",
+        "/home/lcv/Documentos/"
+      ],
+      "Output folder": "/tmp/",
+      "File extension": "",
+      "Ignore": [
+        "bad",
+        "good"
+      ],
+      "Last backup":""
+    }
+  },
+  "properties": {
+    "Input folders": {
+      "tooltip": "Select project folders",
+      "listtype": "folder",
+      "multiple": true,
+      "selected": [
+        "/home/lcv/Documentos/"
+      ]
+    },
+    "Ignore": {
+      "tooltip": "Ignore names that contains",
+      "listtype": "string",
+      "multiple": false,
+      "selected": [
+        "good"
+      ]
+    },
+    "Output folder": {
+      "tooltip": "Select the folder to output charts",
+      "listtype": "folder",
+      "multiple": false,
+      "folder": ""
+    },
+    "Source folders": {
+      "tooltip": "Only the folders that contains source code",
+      "select": [
+        "all",
+        "src"
+      ]
+    },
+    "File extension": {
+      "tooltip": "Which type of files (language) will be included"
+    }
+  }
+}

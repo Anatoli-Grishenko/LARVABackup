@@ -1,0 +1,36 @@
+{
+  "options": {
+    "Sources": {
+      "Input folders": [
+      ],
+      "Output folder": "dot/",
+      "File extension": "java"
+    }
+  },
+  "properties": {
+    "Input folders": {
+      "tooltip": "Select project folders",
+      "listtype": "folder",
+      "multiple": true,
+      "selected": [
+        ""
+      ]
+    },
+    "Output folder": {
+      "tooltip": "Select the folder to output charts",
+      "listtype": "folder",
+      "multiple": false,
+      "folder": ""
+    },
+    "Source folders": {
+      "tooltip": "Only the folders that contains source code",
+      "select": [
+        "all",
+        "src"
+      ]
+    },
+    "File extension": {
+      "tooltip": "Which type of files (language) will be included"
+    }
+  }
+}

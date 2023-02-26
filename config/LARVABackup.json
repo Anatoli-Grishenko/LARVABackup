@@ -1,0 +1,59 @@
+{
+    "options": {
+        "FrameTitle": "Incremental backup",
+        "FrameStatus": true,
+        "FrameSize": {
+            "width": 1024,
+            "height": 768
+        },
+        "FlatLaf": "Dark",
+        "Menu": {
+            "Project": {
+                "New project ...": "NewProject",
+                "Open project...": "OpenProject",
+                "Save project": "SaveProject",
+                "Edit project": "EditProject",
+                "Configure Project...": "ConfigureProject",
+                "Exit": "Exit"
+            },
+            "Backup": {
+                "Simmulate": "Simmulate",
+                "Backup": "Backup"
+            },
+            "Help": {
+                "Help": "Help",
+                "About": "About"
+            }
+        },
+        "ToolBar": {
+            "New Project": {
+                "text": "check_circle"
+            },
+            "Open Project": {
+                "text": "folder_open"
+            },
+            "Save Project": {
+                "text": "save_alt"
+            },
+            "Edit Project": {
+                "text": "article"
+            },
+            "Configure Project": {
+                "text": "settings"
+            },
+            "Simmulate": {
+                "text": "play_arrow"
+            },
+            "Backup": {
+                "text": "play_circle"
+            }
+        },
+        "Default project": ""
+    },
+    "properties": {
+        "ToolBar": {
+            "style": "flat",
+            "type": "icon"
+        }
+    }
+}
