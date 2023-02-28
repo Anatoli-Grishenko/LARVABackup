@@ -12,8 +12,7 @@
                 "New project ...": "NewProject",
                 "Open project...": "OpenProject",
                 "Save project": "SaveProject",
-                "Edit project": "EditProject",
-                "Configure Project...": "ConfigureProject",
+                "Configure project": "ConfigureProject",
                 "Exit": "Exit"
             },
             "Backup": {
@@ -34,9 +33,6 @@
             },
             "Save Project": {
                 "text": "save_alt"
-            },
-            "Edit Project": {
-                "text": "article"
             },
             "Configure Project": {
                 "text": "settings"

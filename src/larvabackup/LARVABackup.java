@@ -16,8 +16,11 @@ import java.awt.Color;
 import static java.awt.Color.BLACK;
 import static java.awt.Color.GREEN;
 import static java.awt.Color.WHITE;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
@@ -26,16 +29,22 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import swing.OleApplication;
 import swing.OleDialog;
 import swing.OleDrawPane;
+import swing.OleList;
 import swing.OleScrollPane;
 import swing.SwingTools;
+import tools.TimeHandler;
 import tools.emojis;
 
 /**
@@ -47,12 +56,16 @@ public class LARVABackup {
     static OleConfig myConfig, myProject; //, myPreferrences;
     static OleApplication oMainFrame;
     static JPanel pSideTools, pStatus, pMain;
-    static JTextArea taList;
+    static JTextArea taList, taUpdate, taNewer;
+    static OleList olFolders;
+    static JPanel folderPane, targetPane;
+    static JLabel jlSourceFolders, jlSourceSize, jlSourceFiles,
+            jlTargetFolders, jlTargetSize, jlTargetFiles, jlTimeBackup, jlUpdates, jlNewers;
     static OleDrawPane opDiagram;
     static OleScrollPane osDiagram;
     static String projectFile = null, outputfile = "./backup.out";
     static ArrayList<String> fileList = null;
-    static FileTable ftSources, ftTargets, ftTocopy;
+    static FileTable ftSources, ftTargets, ftUpdate, ftNew;
     static boolean allsaved = true, allgood = true;
     static XUITTY xuitty;
 
@@ -79,23 +92,71 @@ public class LARVABackup {
                 paintBackup(g);
             }
         };
-        opDiagram = oMainFrame.getDrawingPane();
         osDiagram = oMainFrame.getScollPane();
-        taList = new JTextArea();
+        opDiagram = oMainFrame.getDrawingPane();
+        opDiagram.removeAll();
+        opDiagram.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        folderPane = new JPanel();
+        folderPane.setLayout(new BoxLayout(folderPane, BoxLayout.Y_AXIS));
+//        folderPane.setBackground(WHITE);
+        folderPane.setPreferredSize(new Dimension(
+                opDiagram.getWidth() / 2, opDiagram.getHeight() - 4));
+        folderPane.setBounds(new Rectangle(opDiagram.getWidth() / 2, opDiagram.getHeight() - 4));
+        targetPane = new JPanel();
+        targetPane.setLayout(new BoxLayout(targetPane, BoxLayout.Y_AXIS));
+        targetPane.setPreferredSize(new Dimension(
+                opDiagram.getWidth() / 2 - 64, opDiagram.getHeight() - 4));
+        targetPane.setBounds(new Rectangle(opDiagram.getWidth() / 2, opDiagram.getHeight() - 4));
+        jlSourceSize = new JLabel(emojis.PACKAGE + " Backup size (0)");
+        jlSourceFolders = new JLabel(emojis.FOLDER + " Folders (0)");
+        jlSourceFiles = new JLabel(emojis.CLASS + " Files (0)");
+        taList = new JTextArea(10, 15);
         taList.setEditable(false);
-        taList.setWrapStyleWord(true);
-        xuitty = new XUITTY();
-        xuitty.init(opDiagram, 200, 200, 10);
-        xuitty.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        xuitty.setBackground(BLACK);
-        xuitty.setForeground(WHITE);
-        xuitty.clearScreen();
-        xuitty.render();
-        osDiagram.setHandlerWheel((e) -> Wheel(e));
-//        osDiagram.add(taList);
-//        osDiagram.add(new JButton("hllo"));
-//        osDiagram.validate();
-//        osDiagram.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+//        for (int i = 0; i < 500; i++) {
+//            taList.append(i+"Luis\n");
+//            taList.append(i+"Paqui\n");
+//        }
+        folderPane.add(new JLabel("TO BACKUP"));
+        folderPane.add(new JLabel(emojis.CALENDAR+" "+TimeHandler.Now()));
+        folderPane.add(jlSourceSize);
+        folderPane.add(jlSourceFiles);
+        folderPane.add(jlSourceFolders);
+
+        JScrollPane jsPane = new JScrollPane(taList);
+        jsPane.setPreferredSize(new Dimension(
+                folderPane.getWidth() - 64, folderPane.getHeight() - 64));
+        jsPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        folderPane.add(jsPane);
+        folderPane.validate();
+
+        jlTargetSize = new JLabel(emojis.PACKAGE + " Backup size (0)");
+        jlTargetFolders = new JLabel(emojis.FOLDER + " Folders (0)");
+        jlTargetFiles = new JLabel(emojis.CLASS + " Files (0)");
+        jlTimeBackup = new JLabel(emojis.CALENDAR + " ");
+
+        jlNewers = new JLabel(emojis.NEW + " New (0)");
+        taNewer = new JTextArea(10, 7);
+        taNewer.setEditable(false);
+
+        jlUpdates = new JLabel(emojis.CLOCK + " Updatable (0)");
+        taUpdate = new JTextArea(10, 7);
+        taUpdate.setEditable(false);
+
+        targetPane.add(new JLabel("ALREADY BACKUP"));
+        targetPane.add(jlTimeBackup);
+        targetPane.add(jlTargetSize);
+        targetPane.add(jlTargetFiles);
+        targetPane.add(jlTargetFolders);
+        targetPane.add(jlUpdates);
+        targetPane.add(taUpdate);        
+        targetPane.add(jlNewers);
+        targetPane.add(taNewer);        
+
+        opDiagram.add(folderPane);
+        opDiagram.add(targetPane);
+        targetPane.add(taUpdate);
+        opDiagram.validate();
     }
 
     protected static void scrollUp() {
@@ -134,9 +195,9 @@ public class LARVABackup {
             case "SaveProject":
                 saveProject();
                 break;
-            case "Edit Project":
-            case "EditProject":
-                editProject();
+            case "Configure Project":
+            case "ConfigureProject":
+                configureProject();
                 break;
             case "Simmulate":
                 Simmulate();
@@ -172,7 +233,7 @@ public class LARVABackup {
         if (projectFile != null) {
             myProject = new OleConfig();
             myProject.loadFile(projectFile);
-            editProject();
+            configureProject();
         }
 
     }
@@ -191,11 +252,11 @@ public class LARVABackup {
         projectFile = null;
         myProject = new OleConfig();
         myProject.loadFile("./config/EmptyConfig.backup");
-        editProject();
+        configureProject();
         allsaved = false;
     }
 
-    public static void editProject() {
+    public static void configureProject() {
         if (myProject != null) {
             OleDialog odg;
             odg = new OleDialog(oMainFrame, "Edit project");
@@ -222,17 +283,9 @@ public class LARVABackup {
                 fileList = new ArrayList();
                 ftSources = new FileTable();
                 ftTargets = new FileTable();
-//                command = "find ";
-//                ArrayList<String> inputs = new ArrayList<String>(myProject.getOptions().getOle("Sources").getArray("Input folders"));
-//                for (String s : inputs) {
-//                    command += (" " + s + " ");
-//                }
-//                command = "rsync --list-only -r -u -p ";
-//                ArrayList<String> inputs = new ArrayList<String>(myProject.getOptions().getOle("Sources").getArray("Input folders"));
-//                for (String s : inputs) {
-//                    command += (" " + s + " ");
-//                }
-                ArrayList<String> inputs = new ArrayList<String>(myProject.getOptions().getOle("Sources").getArray("Input folders"));
+                taList.setText("");
+                ArrayList<String> inputs = new ArrayList<String>(myProject.getOptions().getOle("Sources").getArray("Input folders")),
+                        excludes = new ArrayList<String>(myProject.getOptions().getOle("Sources").getArray("Ignore"));
                 oMainFrame.showProgress("Backup", 0, inputs.size());
                 for (String s : inputs) {
                     lcommand = new ArrayList();
@@ -242,32 +295,43 @@ public class LARVABackup {
                     lcommand.add("-r");
                     lcommand.add("-u");
                     lcommand.add("-p");
+                    for (String sex : excludes) {
+                        lcommand.add("--exclude=" + sex);
+                    }
                     lcommand.add(s);
                     System.out.println(">>>>" + s);
                     oMainFrame.showProgress(s);
-//                Process p;
-//                p = Runtime.getRuntime().exec(command);
-//                p.waitFor();
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//                line = reader.readLine();
-//                while (line != null) {
-//                    System.out.println(line);
-//                    fileList.add(line);
-//                    line = reader.readLine();
-//                }
                     ProcessBuilder pb = new ProcessBuilder(lcommand);
                     pb.redirectOutput(new File(outputfile));
                     Process p = pb.start();
                     p.waitFor();
                     Basher blines = new Basher(outputfile);
                     for (String sl : blines.getList()) {
-                        System.out.println(">>>>" + sl);
                         FileRecord fr = new FileRecord(sl);
-                        fr.setName(s+fr.getName());
+                        fr.setName(s + fr.getName());
                         ftSources.add(fr);
                     }
                 }
                 oMainFrame.closeProgress("");
+                lcommand = new ArrayList();
+                lcommand.add("rsync");
+                lcommand.add("--list-only");
+                lcommand.add("-r");
+                lcommand.add("-u");
+                lcommand.add("-p");
+                lcommand.add(myProject.getOptions().getOle("Sources").getString("Output folder", ""));
+                ProcessBuilder pb = new ProcessBuilder(lcommand);
+                pb.redirectOutput(new File(outputfile));
+                Process p = pb.start();
+                p.waitFor();
+                Basher blines = new Basher(outputfile);
+                for (String sl : blines.getList()) {
+                    FileRecord fr = new FileRecord(sl);
+                    fr.setName(myProject.getOptions().getOle("Sources").getString("Output folder", "") + fr.getName());
+                    ftTargets.add(fr);
+                }
+                ftUpdate = ftSources.getUpdatableRecords(ftTargets);
+                ftNew = ftSources.getNewerRecords(ftTargets);
                 showSummary();
             } catch (Exception ex) {
                 oMainFrame.Warning("Error executing command");
@@ -290,18 +354,24 @@ public class LARVABackup {
         oMainFrame.addStatus(emojis.CLASS + " " + ftSources.size() + " Files \t"
                 + emojis.FOLDER + " " + nd + " Folders\t" + emojis.PACKAGE + " "
                 + FileRecord.getMemory(size, FileRecord.Sizes.Bytes));
-        xuitty.clearScreen();
-        xuitty.setForeground(Color.WHITE);
         FileTable ftd = ftSources.getDirectories();
-        xuitty.doFrameTitle(" FOLDERS TO BACKUP ", 0,0,  75, ftd.size()+2);
-        xuitty.setForeground(Color.GREEN);
-        int y=1;
+        int y = 1;
         for (FileRecord fr : ftd.ToArrayList()) {
-            xuitty.setCursorXY(1,y++);
-            xuitty.println(fr.getName());
+            taList.append(fr.getDepth()+"  "+fr.getName() + "\n");
         }
-        xuitty.render();
-        xuitty.setCaretPosition(0);
+        jlSourceFolders.setText(jlSourceFolders.getText().replaceAll("\\(.*\\)", "(" + ftd.size() + ")"));
+        jlSourceFiles.setText(jlSourceFiles.getText().replaceAll("\\(.*\\)", "(" + ftSources.size() + ")"));
+        jlSourceSize.setText(jlSourceSize.getText().replaceAll("\\(.*\\)", "("
+                + FileRecord.getMemory(ftSources.memory(), FileRecord.Sizes.Bytes) + ")"));
+        jlTargetFolders.setText(jlTargetFolders.getText().replaceAll("\\(.*\\)", "(" + ftTargets.getDirectories().size() + ")"));
+        jlTargetFiles.setText(jlTargetFiles.getText().replaceAll("\\(.*\\)", "(" + ftTargets.size() + ")"));
+        jlTargetSize.setText(jlTargetSize.getText().replaceAll("\\(.*\\)", "("
+                + FileRecord.getMemory(ftTargets.memory(), FileRecord.Sizes.Bytes) + ")"));
+        jlUpdates.setText(jlUpdates.getText().replaceAll("\\(.*\\)", "("
+                + ftUpdate.size()+")"));
+        jlNewers.setText(jlNewers.getText().replaceAll("\\(.*\\)", "("
+                + ftNew.size()+")"));
+        jlTimeBackup.setText(emojis.CALENDAR+" "+myProject.getOptions().getOle("Sources").getString("Last backup",""));
     }
 
     public static void doBackup() {

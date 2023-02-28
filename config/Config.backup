@@ -3,15 +3,17 @@
     "Sources": {
       "Input folders": [
         "/home/lcv/bin/",
-        "/home/lcv/Documentos/"
+        "/home/lcv/Documentos/",
+        "/home/lcv/UGR/Docencia/2122/DBA/Dropbox/es.ugr.larva.core/"
       ],
       "Output folder": "/tmp/",
       "File extension": "",
       "Ignore": [
-        "bad",
-        "good"
+        ".git",
+        "/build/",
+        "/dist/"
       ],
-      "Last backup":""
+      "Last backup": ""
     }
   },
   "properties": {
@@ -20,7 +22,7 @@
       "listtype": "folder",
       "multiple": true,
       "selected": [
-        "/home/lcv/Documentos/"
+        "/home/lcv/UGR/Docencia/2122/DBA/Dropbox/es.ugr.larva.core/"
       ]
     },
     "Ignore": {
@@ -28,7 +30,7 @@
       "listtype": "string",
       "multiple": false,
       "selected": [
-        "good"
+        "/dist/"
       ]
     },
     "Output folder": {
